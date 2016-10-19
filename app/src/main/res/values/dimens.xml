@@ -1,0 +1,64 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="_0">0sp</dimen>
+    <dimen name="_20">20sp</dimen>
+    <dimen name="_1">1sp</dimen>
+    <dimen name="_2">2sp</dimen>
+    <dimen name="_14">14sp</dimen>
+    <dimen name="_24">24sp</dimen>
+
+    <dimen name="_ts0">0dp</dimen>
+    <dimen name="_ts1">1dp</dimen>
+    <dimen name="_ts2">2dp</dimen>
+    <dimen name="_ts3">3dp</dimen>
+    <dimen name="_ts4">4dp</dimen>
+    <dimen name="_ts5">5dp</dimen>
+    <dimen name="_ts6">6dp</dimen>
+    <dimen name="_ts7">7dp</dimen>
+    <dimen name="_ts8">8dp</dimen>
+    <dimen name="_ts9">9dp</dimen>
+    <dimen name="_ts10">10dp</dimen>
+    <dimen name="_ts11">11dp</dimen>
+    <dimen name="_ts12">12dp</dimen>
+    <dimen name="_ts13">13dp</dimen>
+    <dimen name="_ts14">14dp</dimen>
+    <dimen name="_ts15">15dp</dimen>
+    <dimen name="_ts16">16dp</dimen>
+    <dimen name="_ts17">17dp</dimen>
+    <dimen name="_ts18">17dp</dimen>
+    <dimen name="_ts19">19dp</dimen>
+    <dimen name="_ts20">20dp</dimen>
+    <dimen name="_ts21">21dp</dimen>
+    <dimen name="_ts22">22dp</dimen>
+    <dimen name="_ts23">23dp</dimen>
+    <dimen name="_ts24">24dp</dimen>
+    <dimen name="_ts25">25dp</dimen>
+    <dimen name="_ts26">26dp</dimen>
+    <dimen name="_ts27">27dp</dimen>
+    <dimen name="_ts28">28dp</dimen>
+    <dimen name="_ts29">29dp</dimen>
+    <dimen name="_ts30">30dp</dimen>
+    <dimen name="_ts31">31dp</dimen>
+    <dimen name="_ts32">32dp</dimen>
+    <dimen name="_ts33">33dp</dimen>
+    <dimen name="_ts34">34dp</dimen>
+    <dimen name="_ts35">35dp</dimen>
+    <dimen name="_ts36">36dp</dimen>
+    <dimen name="_ts37">37dp</dimen>
+    <dimen name="_ts38">38dp</dimen>
+    <dimen name="_ts39">39dp</dimen>
+    <dimen name="_ts40">40dp</dimen>
+    <dimen name="_ts41">41dp</dimen>
+    <dimen name="_ts42">42dp</dimen>
+    <dimen name="_ts43">43dp</dimen>
+    <dimen name="_ts44">44dp</dimen>
+    <dimen name="_ts45">45dp</dimen>
+    <dimen name="_ts46">46dp</dimen>
+    <dimen name="_ts47">47dp</dimen>
+    <dimen name="_ts48">48dp</dimen>
+    <dimen name="_ts49">49dp</dimen>
+    <dimen name="_ts50">50dp</dimen>
+</resources>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1081998780824",
+    "firebase_url": "https://newuniondemo.firebaseio.com",
+    "project_id": "newuniondemo",
+    "storage_bucket": "newuniondemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081998780824:android:84d17cc3dd21cabc",
+        "android_client_info": {
+          "package_name": "com.hoangvnit.newuniondemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081998780824-4k5ap14phca7u4tcuvhpuk2lcl8smgs8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hoangvnit.newuniondemo",
+            "certificate_hash": "96B881A36A414B3F407A3941E8AB9C45FFA4A85E"
+          }
+        },
+        {
+          "client_id": "1081998780824-6bqmhfab8nkoamnij2luc2aro4pqma2r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2-awm3yPCV2HYZPgUT92jCcNS4zmShxw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1081998780824-6bqmhfab8nkoamnij2luc2aro4pqma2r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

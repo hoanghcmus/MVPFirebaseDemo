@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#07a1e8</color>
+    <color name="colorPrimaryDark">#0076ba</color>
+    <color name="colorAccent">#f0c022</color>
+
+    <color name="btn_org_edit">#235d7d</color>
+    <color name="btn_org_add">#0f7ea6</color>
+    <color name="btn_org_delete">#f0c862</color>
+
+    <color name="txt_org_first_info">#f0c022</color>
+    <color name="btn_org_second_info">#a3a3a3</color>
+    <color name="btn_org_third_info">#469dbd</color>
+</resources>
