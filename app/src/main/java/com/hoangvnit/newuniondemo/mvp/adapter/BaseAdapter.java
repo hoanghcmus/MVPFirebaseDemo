@@ -2,6 +2,7 @@ package com.hoangvnit.newuniondemo.mvp.adapter;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.hoangvnit.newuniondemo.mvp.holder.BaseViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.BaseModel;
 
@@ -14,4 +15,9 @@ public abstract class BaseAdapter<M extends BaseModel, H extends BaseViewHolder>
     public BaseAdapter(Class<M> modelClass, int modelLayout, Class<H> viewHolderClass, DatabaseReference ref) {
         super(modelClass, modelLayout, viewHolderClass, ref);
     }
+
+    public BaseAdapter(Class<M> modelClass, int modelLayout, Class<H> viewHolderClass, Query query) {
+        super(modelClass, modelLayout, viewHolderClass, query);
+    }
+
 }

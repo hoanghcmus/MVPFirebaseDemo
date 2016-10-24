@@ -9,9 +9,12 @@ import android.view.View;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.hoangvnit.newuniondemo.R;
 import com.hoangvnit.newuniondemo.base.BaseFragment;
+import com.hoangvnit.newuniondemo.common.EndlessScrollListener;
 import com.hoangvnit.newuniondemo.common.UnionDialogManager;
+import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter1;
 import com.hoangvnit.newuniondemo.mvp.holder.OrganizationViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
+import com.hoangvnit.newuniondemo.util.LogUtil;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -27,6 +30,8 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
     private ICityListPresenter mCityListPresenter;
 
+    private LinearLayoutManager mLinearLayoutManager;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +46,28 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
     @Override
     protected void initView() {
+        initListView();
         if (mCityListPresenter != null) {
             mCityListPresenter.init();
         }
+    }
+
+    private void initListView() {
+        mLinearLayoutManager = new LinearLayoutManager(getContext());
+//        mLinearLayoutManager.setReverseLayout(true);
+//        mLinearLayoutManager.setStackFromEnd(true);
+
+        mRCCityList.setLayoutManager(mLinearLayoutManager);
+        mRCCityList.addOnScrollListener(new EndlessScrollListener(mLinearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                showProgress();
+                showLongToast("page: " + page + "    --  totalItemsCount" + totalItemsCount);
+                LogUtil.e("hcmus", "page: " + page + "    --  totalItemsCount" + totalItemsCount);
+                mCityListPresenter.updateLimit(page * 10);
+
+            }
+        });
     }
 
     @Override
@@ -59,18 +83,16 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
     @Override
     public void setListOrganization(FirebaseRecyclerAdapter<Organization, OrganizationViewHolder> mCityListFirebaseAdapter) {
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-        mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
-
-        mRCCityList.setLayoutManager(mLinearLayoutManager);
         mRCCityList.setAdapter(mCityListFirebaseAdapter);
+    }
+
+    public void setListOrganization1(BaseAdapter1<Organization, OrganizationViewHolder> baseAdapter1) {
+        mRCCityList.setAdapter(baseAdapter1);
     }
 
     @Override
     public void scrollListCityToPosition(int position) {
-        LinearLayoutManager linearLayoutManager = (LinearLayoutManager) mRCCityList.getLayoutManager();
-        linearLayoutManager.scrollToPositionWithOffset(position, 0);
+        mLinearLayoutManager.scrollToPositionWithOffset(position, 0);
     }
 
     @OnClick(R.id.btn_add)

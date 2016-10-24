@@ -22,28 +22,28 @@ public class LogUtil {
     public static void i(String message) {
         if (BuildConfig.DEBUG) {
             Log.i(TAG, message);
-            Log.v(TAG, "--------------------------------------------------------------------------");
+            Log.i(TAG, "--------------------------------------------------------------------------");
         }
     }
 
     public static void d(String message) {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, message);
-            Log.v(TAG, "--------------------------------------------------------------------------");
+            Log.d(TAG, "--------------------------------------------------------------------------");
         }
     }
 
     public static void w(String message) {
         if (BuildConfig.DEBUG) {
             Log.w(TAG, message);
-            Log.v(TAG, "--------------------------------------------------------------------------");
+            Log.w(TAG, "--------------------------------------------------------------------------");
         }
     }
 
     public static void e(String message) {
         if (BuildConfig.DEBUG) {
             Log.e(TAG, message);
-            Log.v(TAG, "--------------------------------------------------------------------------");
+            Log.e(TAG, "--------------------------------------------------------------------------");
         }
     }
 
@@ -57,28 +57,28 @@ public class LogUtil {
     public static void i(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.i(tag, message);
-            Log.v(tag, "--------------------------------------------------------------------------");
+            Log.i(tag, "--------------------------------------------------------------------------");
         }
     }
 
     public static void d(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.d(tag, message);
-            Log.v(tag, "--------------------------------------------------------------------------");
+            Log.d(tag, "--------------------------------------------------------------------------");
         }
     }
 
     public static void w(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.w(tag, message);
-            Log.v(tag, "--------------------------------------------------------------------------");
+            Log.w(tag, "--------------------------------------------------------------------------");
         }
     }
 
     public static void e(String tag, String message) {
         if (BuildConfig.DEBUG) {
             Log.e(tag, message);
-            Log.v(tag, "--------------------------------------------------------------------------");
+            Log.e(tag, "--------------------------------------------------------------------------");
         }
     }
 
