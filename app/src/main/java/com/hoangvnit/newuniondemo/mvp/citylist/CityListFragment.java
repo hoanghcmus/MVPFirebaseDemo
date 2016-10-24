@@ -1,12 +1,15 @@
 package com.hoangvnit.newuniondemo.mvp.citylist;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.hoangvnit.newuniondemo.R;
 import com.hoangvnit.newuniondemo.base.BaseFragment;
+import com.hoangvnit.newuniondemo.common.UnionDialogManager;
 import com.hoangvnit.newuniondemo.mvp.holder.OrganizationViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
 
@@ -23,10 +26,6 @@ public class CityListFragment extends BaseFragment implements ICityListView {
     RecyclerView mRCCityList;
 
     private ICityListPresenter mCityListPresenter;
-
-    public RecyclerView getmRCCityList() {
-        return mRCCityList;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,8 +75,67 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
     @OnClick(R.id.btn_add)
     void showDialogAddOrganization() {
-        if (mCityListPresenter != null) {
-            mCityListPresenter.showDialogAddOrganization(getContext());
-        }
+
+        UnionDialogManager.shareInstance().showAddOrganizationDialog(getContext(), false, -1, null, new UnionDialogManager.OrganizationDialogListener() {
+            @Override
+            public void onCreate(Organization organization) {
+                if (mCityListPresenter != null)
+                    mCityListPresenter.addOrganization(organization);
+            }
+
+            @Override
+            public void onUpdate(Organization organization, int position) {
+                // Don't implement this callback because this dialog showed for creating
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    public void showDialogEditOrganization(Context context, Organization organization, int position) {
+        UnionDialogManager.shareInstance().showAddOrganizationDialog(context, true, position, organization, new UnionDialogManager.OrganizationDialogListener() {
+            @Override
+            public void onCreate(Organization organization) {
+                // Don't implement this callback because this dialog showed for updating
+            }
+
+            @Override
+            public void onUpdate(Organization organization, int position) {
+                if (mCityListPresenter != null)
+                    mCityListPresenter.updateOrganization(organization, position);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
+
+    public void setupClickListenerForCityItemActions(OrganizationViewHolder viewHolder, final Organization organization, final int itemPosition) {
+        viewHolder.mBtnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogAddOrganization();
+            }
+        });
+
+        viewHolder.mBtnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogEditOrganization(getContext(), organization, itemPosition);
+            }
+        });
+
+        viewHolder.mBtnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCityListPresenter != null)
+                    mCityListPresenter.deleteOrganization(itemPosition);
+            }
+        });
     }
 }

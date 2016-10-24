@@ -1,16 +1,13 @@
 package com.hoangvnit.newuniondemo.mvp.citylist;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hoangvnit.newuniondemo.R;
-import com.hoangvnit.newuniondemo.common.UnionDialogManager;
 import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter;
 import com.hoangvnit.newuniondemo.mvp.holder.OrganizationViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
@@ -57,7 +54,7 @@ public class CityListPresenter implements ICityListPresenter {
                             organization.getCity());
                     viewHolder.mTxtThird.setText(organization.getTime().toString());
 
-                    setupClickListenerForCityItemActions(viewHolder, organization, position);
+                    mCityListView.setupClickListenerForCityItemActions(viewHolder, organization, position);
                 }
             };
 
@@ -75,33 +72,6 @@ public class CityListPresenter implements ICityListPresenter {
 
             mCityListView.setListOrganization(mBaseAdapter);
         }
-    }
-
-    private void setupClickListenerForCityItemActions(OrganizationViewHolder viewHolder, final Organization organization, final int itemPosition) {
-        viewHolder.mBtnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCityListView != null) {
-                    showDialogAddOrganization(mCityListView.getContext());
-                }
-            }
-        });
-
-        viewHolder.mBtnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCityListView != null) {
-                    showDialogEditOrganization(mCityListView.getContext(), organization, itemPosition);
-                }
-            }
-        });
-
-        viewHolder.mBtnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteOrganization(itemPosition);
-            }
-        });
     }
 
     @Override
@@ -124,45 +94,6 @@ public class CityListPresenter implements ICityListPresenter {
     public void onDestroy() {
     }
 
-    @Override
-    public void showDialogAddOrganization(Context context) {
-        UnionDialogManager.shareInstance().showAddOrganizationDialog(context, false, -1, null, new UnionDialogManager.OrganizationDialogListener() {
-            @Override
-            public void onCreate(Organization organization) {
-                addOrganization(organization);
-            }
-
-            @Override
-            public void onUpdate(Organization organization, int position) {
-                // Don't implement this callback because this dialog showed for creating
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
-    }
-
-    @Override
-    public void showDialogEditOrganization(Context context, Organization organization, int position) {
-        UnionDialogManager.shareInstance().showAddOrganizationDialog(context, true, position, organization, new UnionDialogManager.OrganizationDialogListener() {
-            @Override
-            public void onCreate(Organization organization) {
-                // Don't implement this callback because this dialog showed for updating
-            }
-
-            @Override
-            public void onUpdate(Organization organization, int position) {
-                updateOrganization(organization, position);
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-        });
-    }
 
     @Override
     public void addOrganization(Organization organization) {

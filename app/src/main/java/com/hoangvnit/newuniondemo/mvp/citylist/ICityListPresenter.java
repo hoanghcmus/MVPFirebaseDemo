@@ -1,7 +1,5 @@
 package com.hoangvnit.newuniondemo.mvp.citylist;
 
-import android.content.Context;
-
 import com.hoangvnit.newuniondemo.base.IBasePresenter;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
 
@@ -12,10 +10,6 @@ import com.hoangvnit.newuniondemo.mvp.model.Organization;
 public interface ICityListPresenter extends IBasePresenter<ICityListView> {
 
     void init();
-
-    void showDialogAddOrganization(Context context);
-
-    void showDialogEditOrganization(Context context, Organization organization, int position);
 
     void addOrganization(Organization organization);
 
