@@ -11,7 +11,7 @@ public interface ICityListPresenter extends IBasePresenter<ICityListView> {
 
     void init();
 
-    void updateLimit(int value);
+    void loadMore();
 
     void addOrganization(Organization organization);
 

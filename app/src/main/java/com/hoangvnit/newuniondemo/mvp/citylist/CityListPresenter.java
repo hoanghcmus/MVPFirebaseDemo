@@ -9,12 +9,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hoangvnit.newuniondemo.R;
-import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter1;
+import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter;
 import com.hoangvnit.newuniondemo.mvp.holder.OrganizationViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
+import com.hoangvnit.newuniondemo.util.LogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hoang on 10/18/16.
@@ -28,7 +31,77 @@ public class CityListPresenter implements ICityListPresenter {
 
     private DatabaseReference mDatabaseReference;
 
-//    private BaseAdapter<Organization, OrganizationViewHolder> mBaseAdapter;
+    private BaseAdapter<Organization, OrganizationViewHolder> mBaseAdapter;
+
+    private String mNextKey = "";
+
+    ValueEventListener mSingleValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            LogUtil.d("0. onDataChange");
+            List<Organization> listOrganization = new ArrayList<>();
+            for (DataSnapshot child : dataSnapshot.getChildren()) {
+                Organization organization = child.getValue(Organization.class);
+                organization.setKey(child.getKey());
+                listOrganization.add(0, organization);
+            }
+
+            if (listOrganization.size() == 6) {
+                mNextKey = listOrganization.get(5).getKey();
+                listOrganization.remove(5);
+            } else {
+                mNextKey = "";
+            }
+
+            mBaseAdapter.setData(listOrganization);
+
+            mBaseAdapter.getQuery().removeEventListener(mChildEventListener);
+            mBaseAdapter.getQuery().addChildEventListener(mChildEventListener);
+
+            if (mCityListView != null) {
+                mCityListView.hideProgress();
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    ChildEventListener mChildEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            LogUtil.d("1. onChildAdded ");
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            LogUtil.d("2. onChildChanged");
+            Organization organization = dataSnapshot.getValue(Organization.class);
+            organization.setKey(dataSnapshot.getKey());
+            mBaseAdapter.editItem(organization);
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            LogUtil.d("3. onChildRemoved");
+            Organization organization = dataSnapshot.getValue(Organization.class);
+            organization.setKey(dataSnapshot.getKey());
+            mBaseAdapter.removeItem(organization);
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            LogUtil.d("4. onChildMoved");
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            LogUtil.d("5. onCancelled");
+        }
+    };
+
 
     public CityListPresenter(CityListFragment mCityListView) {
         this.mCityListView = mCityListView;
@@ -38,115 +111,14 @@ public class CityListPresenter implements ICityListPresenter {
     public void onCreate() {
     }
 
-    private BaseAdapter1<Organization, OrganizationViewHolder> mBaseAdapter1;
-
     @Override
     public void init() {
-//        if (mCityListView != null) {
-//            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-//            mBaseAdapter = new BaseAdapter<Organization, OrganizationViewHolder>(
-//                    Organization.class,
-//                    R.layout.item_organiztion,
-//                    OrganizationViewHolder.class,
-//                    mDatabaseReference.child(ORGANIZATION_CHILD)) {
-//
-//                @Override
-//                protected void populateViewHolder(OrganizationViewHolder viewHolder, Organization organization, int position) {
-//                    viewHolder.mTxtFirst.setText(organization.getOrganizationName());
-//                    viewHolder.mTxtSecond.setText(organization.getPinCode() + " - " +
-//                            organization.getAddress() + " - " +
-//                            organization.getCountry() + " - " +
-//                            organization.getState() + " - " +
-//                            organization.getCity());
-//                    viewHolder.mTxtThird.setText(organization.getTime().toString());
-//
-//                    mCityListView.setupClickListenerForCityItemActions(viewHolder, organization, position);
-//                }
-//            };
-//
-//            mBaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//                @Override
-//                public void onItemRangeInserted(int positionStart, int itemCount) {
-//                    super.onItemRangeInserted(positionStart, itemCount);
-//
-//                    int organizationCount = mBaseAdapter.getItemCount();
-//                    if (positionStart == organizationCount - 1) {
-//                        mCityListView.scrollListCityToPosition(positionStart);
-//                    }
-//                }
-//            });
-//
-//            mCityListView.setListOrganization(mBaseAdapter);
-//        }
-
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        mBaseAdapter1 = new BaseAdapter1<Organization, OrganizationViewHolder>(
+        mBaseAdapter = new BaseAdapter<Organization, OrganizationViewHolder>(
                 R.layout.item_organiztion,
                 OrganizationViewHolder.class,
-                mDatabaseReference.child(ORGANIZATION_CHILD),
-                new BaseAdapter1.OnDataListener<Organization>() {
-                    @Override
-                    public void onChildAdded(Organization model) {
-                        mBaseAdapter1.addItemTop(model);
-                    }
-
-                    @Override
-                    public void onChildChanged(Organization model) {
-                        mBaseAdapter1.editItem(model);
-                    }
-
-                    @Override
-                    public void onChildRemoved(Organization model) {
-                        mBaseAdapter1.removeItem(model);
-                    }
-                }) {
-            @Override
-            protected void registerListener(Query query, final OnDataListener onDataListener) {
-
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                query.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Organization organization = dataSnapshot.getValue(Organization.class);
-                        organization.setKey(dataSnapshot.getKey());
-                        onDataListener.onChildAdded(organization);
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        Organization organization = dataSnapshot.getValue(Organization.class);
-                        organization.setKey(dataSnapshot.getKey());
-                        onDataListener.onChildChanged(organization);
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        Organization organization = dataSnapshot.getValue(Organization.class);
-                        organization.setKey(dataSnapshot.getKey());
-                        onDataListener.onChildRemoved(organization);
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-            }
+                mDatabaseReference.child(ORGANIZATION_CHILD)) {
 
             @Override
             protected void populateViewHolder(OrganizationViewHolder viewHolder, Organization organization, int position) {
@@ -162,15 +134,18 @@ public class CityListPresenter implements ICityListPresenter {
             }
         };
 
-        mCityListView.setListOrganization1(mBaseAdapter1);
+        mBaseAdapter.getQuery().orderByKey().limitToLast(6).addListenerForSingleValueEvent(mSingleValueEventListener);
+
+        mCityListView.setListOrganization(mBaseAdapter);
     }
 
     @Override
-    public void updateLimit(int value) {
-        mBaseAdapter1.setLimit(value);
-        if (mCityListView != null) {
-            mCityListView.hideProgress();
-        }
+    public void loadMore() {
+        if (mCityListView != null)
+            mCityListView.showProgress();
+        LogUtil.d("Next key to load more: " + mNextKey);
+        mBaseAdapter.getQuery().removeEventListener(mSingleValueEventListener);
+        mBaseAdapter.getQuery().orderByKey().endAt(mNextKey).limitToLast(6).addListenerForSingleValueEvent(mSingleValueEventListener);
     }
 
     @Override
@@ -194,50 +169,35 @@ public class CityListPresenter implements ICityListPresenter {
     }
 
     @Override
-    public void addOrganization(Organization organization) {
-        mDatabaseReference.child(ORGANIZATION_CHILD).push().setValue(organization);
+    public void addOrganization(final Organization organization) {
+        final DatabaseReference databaseReference = mDatabaseReference.child(ORGANIZATION_CHILD).push();
+        databaseReference.setValue(organization).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                String key = databaseReference.getKey();
+                organization.setKey(key);
+                mBaseAdapter.addItemTop(organization);
+                LogUtil.d("Key have just added: " + key);
+                mCityListView.scrollListCityToPosition(0);
+            }
+        });
     }
-
-//    @Override
-//    public void updateOrganization(Organization organization, int position) {
-//        int organizationCount = mBaseAdapter.getItemCount();
-//        if (position < organizationCount) {
-//            String organizationID = mBaseAdapter.getRef(position).getKey();
-//            mDatabaseReference.child(ORGANIZATION_CHILD).child(organizationID).setValue(organization);
-//        }
-//    }
-//
-//    @Override
-//    public void deleteOrganization(int position) {
-//        int organizationCount = mBaseAdapter.getItemCount();
-//        if (position < organizationCount) {
-//            if (mCityListView != null) mCityListView.showProgress();
-//            String organizationID = mBaseAdapter.getRef(position).getKey();
-//            mDatabaseReference.child(ORGANIZATION_CHILD).child(organizationID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if (mCityListView != null) mCityListView.hideProgress();
-//                }
-//            });
-//        }
-//    }
-
 
     @Override
     public void updateOrganization(Organization organization, int position) {
-        int organizationCount = mBaseAdapter1.getItemCount();
+        int organizationCount = mBaseAdapter.getItemCount();
         if (position < organizationCount) {
-            String organizationID = mBaseAdapter1.getItem(position).getKey();
+            String organizationID = mBaseAdapter.getItem(position).getKey();
             mDatabaseReference.child(ORGANIZATION_CHILD).child(organizationID).setValue(organization);
         }
     }
 
     @Override
     public void deleteOrganization(int position) {
-        int organizationCount = mBaseAdapter1.getItemCount();
+        int organizationCount = mBaseAdapter.getItemCount();
         if (position < organizationCount) {
             if (mCityListView != null) mCityListView.showProgress();
-            String organizationID = mBaseAdapter1.getItem(position).getKey();
+            String organizationID = mBaseAdapter.getItem(position).getKey();
             mDatabaseReference.child(ORGANIZATION_CHILD).child(organizationID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

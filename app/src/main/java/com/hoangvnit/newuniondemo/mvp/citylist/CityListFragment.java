@@ -6,15 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.hoangvnit.newuniondemo.R;
 import com.hoangvnit.newuniondemo.base.BaseFragment;
 import com.hoangvnit.newuniondemo.common.EndlessScrollListener;
 import com.hoangvnit.newuniondemo.common.UnionDialogManager;
-import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter1;
+import com.hoangvnit.newuniondemo.mvp.adapter.BaseAdapter;
 import com.hoangvnit.newuniondemo.mvp.holder.OrganizationViewHolder;
 import com.hoangvnit.newuniondemo.mvp.model.Organization;
-import com.hoangvnit.newuniondemo.util.LogUtil;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -47,6 +45,7 @@ public class CityListFragment extends BaseFragment implements ICityListView {
     @Override
     protected void initView() {
         initListView();
+        showProgress();
         if (mCityListPresenter != null) {
             mCityListPresenter.init();
         }
@@ -54,18 +53,11 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
     private void initListView() {
         mLinearLayoutManager = new LinearLayoutManager(getContext());
-//        mLinearLayoutManager.setReverseLayout(true);
-//        mLinearLayoutManager.setStackFromEnd(true);
-
         mRCCityList.setLayoutManager(mLinearLayoutManager);
         mRCCityList.addOnScrollListener(new EndlessScrollListener(mLinearLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                showProgress();
-                showLongToast("page: " + page + "    --  totalItemsCount" + totalItemsCount);
-                LogUtil.e("hcmus", "page: " + page + "    --  totalItemsCount" + totalItemsCount);
-                mCityListPresenter.updateLimit(page * 10);
-
+            public void onLoadMore(final int page, final int totalItemsCount) {
+                mCityListPresenter.loadMore();
             }
         });
     }
@@ -82,12 +74,8 @@ public class CityListFragment extends BaseFragment implements ICityListView {
 
 
     @Override
-    public void setListOrganization(FirebaseRecyclerAdapter<Organization, OrganizationViewHolder> mCityListFirebaseAdapter) {
+    public void setListOrganization(BaseAdapter<Organization, OrganizationViewHolder> mCityListFirebaseAdapter) {
         mRCCityList.setAdapter(mCityListFirebaseAdapter);
-    }
-
-    public void setListOrganization1(BaseAdapter1<Organization, OrganizationViewHolder> baseAdapter1) {
-        mRCCityList.setAdapter(baseAdapter1);
     }
 
     @Override
