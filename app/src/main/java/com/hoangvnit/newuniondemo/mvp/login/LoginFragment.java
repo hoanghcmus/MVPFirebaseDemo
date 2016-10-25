@@ -20,10 +20,10 @@ import butterknife.OnClick;
  * Created by hoang on 10/18/16.
  */
 
-public class LoginFragment extends BaseFragment implements ILoginView,
+public class LoginFragment extends BaseFragment implements LoginContract.LoginView,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private ILoginPresenter mILoginPresenter;
+    private LoginContract.LoginPresenter mILoginPresenter;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -52,7 +52,7 @@ public class LoginFragment extends BaseFragment implements ILoginView,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mILoginPresenter = new LoginPresenter(this);
+        mILoginPresenter = new LoginPresenterImpl(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))

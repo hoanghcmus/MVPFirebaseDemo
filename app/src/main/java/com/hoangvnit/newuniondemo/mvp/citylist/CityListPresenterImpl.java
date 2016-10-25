@@ -23,7 +23,7 @@ import java.util.List;
  * Created by hoang on 10/18/16.
  */
 
-public class CityListPresenter implements ICityListPresenter {
+public class CityListPresenterImpl implements CityListContract.CityListPresenter {
 
     private CityListFragment mCityListView;
 
@@ -102,13 +102,8 @@ public class CityListPresenter implements ICityListPresenter {
         }
     };
 
-
-    public CityListPresenter(CityListFragment mCityListView) {
+    public CityListPresenterImpl(CityListFragment mCityListView) {
         this.mCityListView = mCityListView;
-    }
-
-    @Override
-    public void onCreate() {
     }
 
     @Override
@@ -149,26 +144,6 @@ public class CityListPresenter implements ICityListPresenter {
     }
 
     @Override
-    public void onStart() {
-    }
-
-    @Override
-    public void onResume() {
-    }
-
-    @Override
-    public void onPause() {
-    }
-
-    @Override
-    public void onStop() {
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
-    @Override
     public void addOrganization(final Organization organization) {
         final DatabaseReference databaseReference = mDatabaseReference.child(ORGANIZATION_CHILD).push();
         databaseReference.setValue(organization).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -205,5 +180,15 @@ public class CityListPresenter implements ICityListPresenter {
                 }
             });
         }
+    }
+
+    @Override
+    public void onAttach(CityListContract.CityListView view) {
+
+    }
+
+    @Override
+    public void onDetach(CityListContract.CityListView view) {
+
     }
 }

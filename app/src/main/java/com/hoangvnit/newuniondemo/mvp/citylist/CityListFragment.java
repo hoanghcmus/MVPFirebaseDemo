@@ -21,12 +21,12 @@ import butterknife.OnClick;
  * Created by hoang on 10/18/16.
  */
 
-public class CityListFragment extends BaseFragment implements ICityListView {
+public class CityListFragment extends BaseFragment implements CityListContract.CityListView {
 
     @Bind(R.id.list_city)
     RecyclerView mRCCityList;
 
-    private ICityListPresenter mCityListPresenter;
+    private CityListContract.CityListPresenter mCityListPresenter;
 
     private LinearLayoutManager mLinearLayoutManager;
 
@@ -34,7 +34,7 @@ public class CityListFragment extends BaseFragment implements ICityListView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCityListPresenter = new CityListPresenter(this);
+        mCityListPresenter = new CityListPresenterImpl(this);
     }
 
     @Override

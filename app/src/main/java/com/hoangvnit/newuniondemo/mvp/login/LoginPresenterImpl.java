@@ -20,41 +20,12 @@ import com.hoangvnit.newuniondemo.util.LogUtil;
  * Created by hoang on 10/18/16.
  */
 
-public class LoginPresenter implements ILoginPresenter {
+public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
     private LoginFragment mILoginView;
 
-    public LoginPresenter(LoginFragment loginView) {
+    public LoginPresenterImpl(LoginFragment loginView) {
         mILoginView = loginView;
-    }
-
-    @Override
-    public void onCreate() {
-    }
-
-    @Override
-    public void onStart() {
-
-    }
-
-    @Override
-    public void onResume() {
-
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onStop() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-
     }
 
     @Override
@@ -92,5 +63,15 @@ public class LoginPresenter implements ILoginPresenter {
                         }
                     });
         }
+    }
+
+    @Override
+    public void onAttach(LoginContract.LoginView view) {
+
+    }
+
+    @Override
+    public void onDetach(LoginContract.LoginView view) {
+
     }
 }
