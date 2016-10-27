@@ -1,5 +1,6 @@
 package com.hoangvnit.newuniondemo.mvp.citylist;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,12 +34,24 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
 
     private BaseAdapter<Organization, OrganizationViewHolder> mBaseAdapter;
 
-    private String mNextKey = "";
+    private String mNextKey = ""; // Key of next item of last item on the list
 
-    ValueEventListener mSingleValueEventListener = new ValueEventListener() {
+    private static final int itemPerPage = 5; // item amount per page
+
+    private long itemOrderCount = 0; // Order of item every time call onChildAdded
+
+    private long firstTimeTotal = 0; // Total item loaded only once, on the first init
+
+    private boolean isInit = true; // Flag to determine the fist init
+
+    /**
+     * Use this single value listener to load
+     * a number of item ({@link CityListPresenterImpl#itemPerPage}) for every time load more
+     */
+    private ValueEventListener mSingleValueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            LogUtil.d("0. onDataChange");
+            LogUtil.d("SingleValueEventListener --> onDataChange()");
             List<Organization> listOrganization = new ArrayList<>();
             for (DataSnapshot child : dataSnapshot.getChildren()) {
                 Organization organization = child.getValue(Organization.class);
@@ -46,17 +59,14 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
                 listOrganization.add(0, organization);
             }
 
-            if (listOrganization.size() == 6) {
-                mNextKey = listOrganization.get(5).getKey();
-                listOrganization.remove(5);
+            if (listOrganization.size() == itemPerPage + 1) {
+                mNextKey = listOrganization.get(itemPerPage).getKey();
+                listOrganization.remove(itemPerPage);
             } else {
                 mNextKey = "";
             }
 
             mBaseAdapter.setData(listOrganization);
-
-            mBaseAdapter.getQuery().removeEventListener(mChildEventListener);
-            mBaseAdapter.getQuery().addChildEventListener(mChildEventListener);
 
             if (mCityListView != null) {
                 mCityListView.hideProgress();
@@ -69,15 +79,47 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
         }
     };
 
-    ChildEventListener mChildEventListener = new ChildEventListener() {
+    /**
+     * Use this value event listener to get total item on the first time listen
+     * and register listener ChildEventListener or items.
+     */
+    private ValueEventListener mValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if (isInit) {
+                LogUtil.d("ValueEventListener --> onDataChange() --> firstTimeTotal: " + firstTimeTotal);
+                firstTimeTotal = dataSnapshot.getChildrenCount();
+                mBaseAdapter.getQuery().addChildEventListener(mChildEventListener);
+                isInit = false;
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
+    /**
+     * Use this to listen the change of items
+     */
+    private ChildEventListener mChildEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            LogUtil.d("1. onChildAdded ");
+            LogUtil.d(itemOrderCount + ". onChildAdded  --> totalItem = " + firstTimeTotal);
+            if (itemOrderCount >= firstTimeTotal) {
+                Organization organization = dataSnapshot.getValue(Organization.class);
+                organization.setKey(dataSnapshot.getKey());
+                mBaseAdapter.addItemTop(organization);
+                if (mCityListView != null)
+                    mCityListView.showShortToast(organization.getOrganizationName() + " has just been added");
+            }
+            itemOrderCount++;
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            LogUtil.d("2. onChildChanged");
+            LogUtil.i("ChildEventListener --> onChildChanged()");
             Organization organization = dataSnapshot.getValue(Organization.class);
             organization.setKey(dataSnapshot.getKey());
             mBaseAdapter.editItem(organization);
@@ -85,7 +127,7 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            LogUtil.d("3. onChildRemoved");
+            LogUtil.i("ChildEventListener --> onChildRemoved()");
             Organization organization = dataSnapshot.getValue(Organization.class);
             organization.setKey(dataSnapshot.getKey());
             mBaseAdapter.removeItem(organization);
@@ -93,12 +135,12 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            LogUtil.d("4. onChildMoved");
+            LogUtil.i("ChildEventListener --> onChildMoved()");
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            LogUtil.d("5. onCancelled");
+            LogUtil.i("ChildEventListener --> onCancelled()");
         }
     };
 
@@ -109,7 +151,6 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
     @Override
     public void init() {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
         mBaseAdapter = new BaseAdapter<Organization, OrganizationViewHolder>(
                 R.layout.item_organiztion,
                 OrganizationViewHolder.class,
@@ -129,7 +170,9 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
             }
         };
 
-        mBaseAdapter.getQuery().orderByKey().limitToLast(6).addListenerForSingleValueEvent(mSingleValueEventListener);
+        mBaseAdapter.getQuery().orderByKey().limitToLast(itemPerPage + 1).addListenerForSingleValueEvent(mSingleValueEventListener);
+
+        mBaseAdapter.getQuery().addValueEventListener(mValueEventListener);
 
         mCityListView.setListOrganization(mBaseAdapter);
     }
@@ -138,24 +181,30 @@ public class CityListPresenterImpl implements CityListContract.CityListPresenter
     public void loadMore() {
         if (mCityListView != null)
             mCityListView.showProgress();
-        LogUtil.d("Next key to load more: " + mNextKey);
-        mBaseAdapter.getQuery().removeEventListener(mSingleValueEventListener);
-        mBaseAdapter.getQuery().orderByKey().endAt(mNextKey).limitToLast(6).addListenerForSingleValueEvent(mSingleValueEventListener);
+        try {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LogUtil.d("Next key to load more: " + mNextKey);
+                    mBaseAdapter.getQuery().removeEventListener(mSingleValueEventListener);
+                    mBaseAdapter.getQuery().orderByKey().endAt(mNextKey).limitToLast(itemPerPage + 1).addListenerForSingleValueEvent(mSingleValueEventListener);
+                }
+            }, 500);
+        } catch (Exception e) {
+            LogUtil.e("Load more exception: " + e.getMessage());
+        }
     }
 
     @Override
     public void addOrganization(final Organization organization) {
-        final DatabaseReference databaseReference = mDatabaseReference.child(ORGANIZATION_CHILD).push();
-        databaseReference.setValue(organization).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                String key = databaseReference.getKey();
-                organization.setKey(key);
-                mBaseAdapter.addItemTop(organization);
-                LogUtil.d("Key have just added: " + key);
-                mCityListView.scrollListCityToPosition(0);
-            }
-        });
+        mDatabaseReference.child(ORGANIZATION_CHILD).push().setValue(organization)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (mCityListView != null)
+                            mCityListView.scrollListCityToPosition(0);
+                    }
+                });
     }
 
     @Override
